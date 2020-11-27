@@ -16,7 +16,7 @@ class PhoneNumber {
     private final String countryPrefix;
     private final String areaCode;
     private final String number;
-    private final LocalDate lastNotificationDate;
+    private final LocalDate lastAdvertisementDate;
 
     static PhoneNumber from(String phoneNumber) {
         return PhoneNumber.builder()

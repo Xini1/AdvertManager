@@ -16,6 +16,7 @@ public class AdvertManagerFacade {
     private final AdvertRepository advertRepository;
     private final PhoneNumberRepository phoneNumberRepository;
     private final AdvertFactory advertFactory;
+    private final AdvertManagerProperties advertManagerProperties;
 
     public long createOrUpdate(SaveAdvertCommand command) {
         log.debug("Validating command = {}", command);

@@ -19,7 +19,8 @@ class AdvertManagerFacadeTest {
 
     @BeforeEach
     void setUp() {
-        advertManagerFacade = new AdvertManagerConfiguration().advertManagerFacadeForTests();
+        advertManagerFacade = new AdvertManagerConfiguration()
+                .advertManagerFacadeForTests(AdvertManagerProperties.builder().build());
     }
 
     @Test

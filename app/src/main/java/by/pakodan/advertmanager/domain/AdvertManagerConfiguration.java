@@ -2,17 +2,20 @@ package by.pakodan.advertmanager.domain;
 
 public class AdvertManagerConfiguration {
 
-    public AdvertManagerFacade advertManagerFacadeForTests() {
-        return advertManagerFacade(new InMemoryAdvertRepository(), new InMemoryPhoneNumberRepository());
+    public AdvertManagerFacade advertManagerFacadeForTests(AdvertManagerProperties advertManagerProperties) {
+        return advertManagerFacade(new InMemoryAdvertRepository(), new InMemoryPhoneNumberRepository(),
+                advertManagerProperties);
     }
 
     AdvertManagerFacade advertManagerFacade(AdvertRepository advertRepository,
-                                            PhoneNumberRepository phoneNumberRepository) {
+                                            PhoneNumberRepository phoneNumberRepository,
+                                            AdvertManagerProperties advertManagerProperties) {
 
         return AdvertManagerFacade.builder()
                 .advertRepository(advertRepository)
                 .phoneNumberRepository(phoneNumberRepository)
                 .advertFactory(new AdvertFactory())
+                .advertManagerProperties(advertManagerProperties)
                 .build();
     }
 }
