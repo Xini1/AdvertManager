@@ -26,7 +26,7 @@
             <AppenderRef ref="File"/>
         </Logger>
 
-        <Logger name="by.pakodan.advertmanager" level="debug" additivity="false">
+        <Logger name="by.pakodan.advertservice" level="debug" additivity="false">
             <AppenderRef ref="Console"/>
             <AppenderRef ref="File"/>
         </Logger>

@@ -1,13 +1,19 @@
 package by.pakodan.advertservice.domain;
 
 import by.pakodan.advertservice.domain.dto.SaveAdvertCommand;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.util.Set;
+import java.util.stream.Collectors;
 
+@RequiredArgsConstructor
 @Slf4j
 class AdvertFactory {
+
+    private final Clock clock;
 
     Advert constructAdvert(SaveAdvertCommand command, Set<PhoneNumber> phoneNumbers) {
         log.debug("Constructing new advert");
@@ -20,7 +26,7 @@ class AdvertFactory {
                         .houseNumber(command.getHouseNumber())
                         .level(command.getLevel())
                         .build())
-                .creationDate(LocalDate.now())
+                .creationDate(LocalDate.now(clock))
                 .build();
     }
 
@@ -28,7 +34,7 @@ class AdvertFactory {
         log.debug("Updating existing advert");
 
         return setCommonFiends(advert.toBuilder(), command, phoneNumbers)
-                .lastModificationDate(LocalDate.now())
+                .lastModificationDate(LocalDate.now(clock))
                 .build();
     }
 
@@ -44,6 +50,8 @@ class AdvertFactory {
                         .amount(command.getAmount())
                         .currency(Currency.valueOf(command.getCurrencyString()))
                         .build())
-                .phoneNumbers(phoneNumbers);
+                .phoneNumberIds(phoneNumbers.stream()
+                        .map(PhoneNumber::getId)
+                        .collect(Collectors.toSet()));
     }
 }

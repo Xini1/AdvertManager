@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import javax.validation.ConstraintViolationException;
 import java.math.BigDecimal;
+import java.time.Clock;
 import java.util.Collections;
 import java.util.Set;
 
@@ -19,7 +20,7 @@ class CreateOrUpdateAdvertTest {
 
     @BeforeEach
     void setUp() {
-        advertServiceFacade = new AdvertServiceConfiguration().advertServiceFacadeForTests();
+        advertServiceFacade = new AdvertServiceConfiguration().advertServiceFacadeForTests(Clock.systemDefaultZone());
     }
 
     @Test
