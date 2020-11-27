@@ -2,10 +2,11 @@ package by.pakodan.advertmanager.domain;
 
 import by.pakodan.advertmanager.domain.dto.SaveAdvertCommand;
 import by.pakodan.advertmanager.domain.exception.AdvertNotFoundException;
-import by.pakodan.advertmanager.domain.exception.ValidationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import javax.validation.ConstraintViolationException;
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Set;
 
@@ -45,12 +46,12 @@ class AdvertManagerFacadeTest {
     }
 
     @Test
-    void givenSaveAdvertCommandInvalid_whenCreateOrUpdate_thenThrowValidationException() {
+    void givenSaveAdvertCommandInvalid_whenCreateOrUpdate_thenThrowConstraintViolationException() {
         SaveAdvertCommand invalidSaveAdvertCommand = getSaveAdvertCommand().toBuilder()
                 .urlString(null)
                 .build();
 
-        assertThrows(ValidationException.class, () -> advertManagerFacade.createOrUpdate(invalidSaveAdvertCommand));
+        assertThrows(ConstraintViolationException.class, () -> advertManagerFacade.createOrUpdate(invalidSaveAdvertCommand));
     }
 
     @Test
@@ -66,6 +67,7 @@ class AdvertManagerFacadeTest {
                 .street("street")
                 .houseNumber(1)
                 .level(1)
+                .amount(new BigDecimal(0))
                 .currencyString("BYN")
                 .phoneNumberStrings(Collections.singleton("+375291111111"))
                 .build();

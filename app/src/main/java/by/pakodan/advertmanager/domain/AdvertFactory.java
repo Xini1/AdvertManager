@@ -1,13 +1,17 @@
 package by.pakodan.advertmanager.domain;
 
 import by.pakodan.advertmanager.domain.dto.SaveAdvertCommand;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;
 import java.util.Set;
 
+@Slf4j
 class AdvertFactory {
 
     Advert constructAdvert(SaveAdvertCommand command, Set<PhoneNumber> phoneNumbers) {
+        log.debug("Constructing new advert");
+
         return setCommonFiends(Advert.builder(), command, phoneNumbers)
                 .address(Address.builder()
                         .city(command.getCity())
@@ -21,6 +25,8 @@ class AdvertFactory {
     }
 
     Advert updateAdvert(Advert advert, SaveAdvertCommand command, Set<PhoneNumber> phoneNumbers) {
+        log.debug("Updating existing advert");
+
         return setCommonFiends(advert.toBuilder(), command, phoneNumbers)
                 .lastModificationDate(LocalDate.now())
                 .build();

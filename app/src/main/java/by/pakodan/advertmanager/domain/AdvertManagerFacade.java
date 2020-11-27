@@ -4,12 +4,13 @@ import by.pakodan.advertmanager.domain.dto.AdvertDto;
 import by.pakodan.advertmanager.domain.dto.SaveAdvertCommand;
 import by.pakodan.advertmanager.domain.exception.AdvertNotFoundException;
 import lombok.Builder;
+import lombok.extern.slf4j.Slf4j;
 
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Builder
+@Slf4j
 public class AdvertManagerFacade {
 
     private final AdvertRepository advertRepository;
@@ -17,34 +18,34 @@ public class AdvertManagerFacade {
     private final AdvertFactory advertFactory;
 
     public long createOrUpdate(SaveAdvertCommand command) {
+        log.debug("Validating command = {}", command);
         validate(command);
 
+        log.debug("Fetching phone numbers from database");
         Set<PhoneNumber> phoneNumbers = getPhoneNumbers(command.getPhoneNumberStrings());
 
+        log.debug("Constructing advert from command");
         Advert advertForSave = advertRepository.findByAddressAndPhoneNumbers(getAddressFrom(command), phoneNumbers)
                 .map(advert -> advertFactory.updateAdvert(advert, command, phoneNumbers))
-                .orElse(advertFactory.constructAdvert(command, phoneNumbers));
+                .orElseGet(() -> advertFactory.constructAdvert(command, phoneNumbers));
 
+        log.debug("Saving advert to database");
         return advertRepository.save(advertForSave).getId();
     }
 
     public AdvertDto getById(long id) {
+        log.debug("Finding advert in database by id = {}", id);
+
         return advertRepository.findById(id)
                 .map(Advert::toAdvertDto)
                 .orElseThrow(() -> new AdvertNotFoundException(id));
     }
 
     private void validate(SaveAdvertCommand command) {
-        new Validator<>(command)
-                .validate(c -> Objects.nonNull(c.getUrlString()), "Url must not be null")
-                .validate(c -> Objects.nonNull(c.getCity()), "City must not be null")
-                .validate(c -> Objects.nonNull(c.getDistrict()), "District must not be null")
-                .validate(c -> Objects.nonNull(c.getStreet()), "Street must not be null")
-                .validate(c -> c.getHouseNumber() > 0, "House number must be positive")
-                .validate(c -> c.getLevel() > 0, "Level must be positive")
-                .validate(c -> c.getLevel() > 0, "Level must be positive")
-                .validate(c -> !c.getPhoneNumberStrings().isEmpty(), "At least one phone number required")
+        new ValidationExecutor<>(command)
+                .validate()
                 .errorHandler()
+                .log()
                 .ifPresentThrowException();
     }
 
