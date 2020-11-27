@@ -3,10 +3,8 @@ package by.pakodan.advertmanager.domain;
 import by.pakodan.advertmanager.domain.dto.AdvertDto;
 import by.pakodan.advertmanager.domain.dto.SaveAdvertCommand;
 import by.pakodan.advertmanager.domain.exception.AdvertNotFoundException;
-import by.pakodan.advertmanager.domain.exception.ValidationException;
 import lombok.Builder;
 
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -37,7 +35,7 @@ public class AdvertManagerFacade {
     }
 
     private void validate(SaveAdvertCommand command) {
-        List<String> errors = new Validator<>(command)
+        new Validator<>(command)
                 .validate(c -> Objects.nonNull(c.getUrlString()), "Url must not be null")
                 .validate(c -> Objects.nonNull(c.getCity()), "City must not be null")
                 .validate(c -> Objects.nonNull(c.getDistrict()), "District must not be null")
@@ -46,11 +44,8 @@ public class AdvertManagerFacade {
                 .validate(c -> c.getLevel() > 0, "Level must be positive")
                 .validate(c -> c.getLevel() > 0, "Level must be positive")
                 .validate(c -> !c.getPhoneNumberStrings().isEmpty(), "At least one phone number required")
-                .getErrors();
-
-        if (!errors.isEmpty()) {
-            throw new ValidationException(getFullMessage(errors));
-        }
+                .errorHandler()
+                .ifPresentThrowException();
     }
 
     private Set<PhoneNumber> getPhoneNumbers(Set<String> phoneNumberStrings) {
@@ -68,9 +63,5 @@ public class AdvertManagerFacade {
                 .houseNumber(command.getHouseNumber())
                 .level(command.getLevel())
                 .build();
-    }
-
-    private String getFullMessage(List<String> errors) {
-        return "Constraint violations:\n" + String.join("\n", errors);
     }
 }

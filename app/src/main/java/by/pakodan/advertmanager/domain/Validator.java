@@ -1,6 +1,7 @@
 package by.pakodan.advertmanager.domain;
 
-import lombok.Getter;
+import by.pakodan.advertmanager.domain.exception.ValidationException;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 
 import java.util.ArrayList;
@@ -11,7 +12,6 @@ import java.util.function.Predicate;
 class Validator<T> {
 
     private final T instance;
-    @Getter
     private final List<String> errors = new ArrayList<>();
 
     Validator<T> validate(Predicate<T> constraint, String message) {
@@ -20,5 +20,23 @@ class Validator<T> {
         }
 
         return this;
+    }
+
+    ValidationErrorHandler errorHandler() {
+        return new ValidationErrorHandler();
+    }
+
+    @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+    class ValidationErrorHandler {
+
+        void ifPresentThrowException() {
+            if (!errors.isEmpty()) {
+                throw new ValidationException(getFullMessage(errors));
+            }
+        }
+
+        private String getFullMessage(List<String> errors) {
+            return "Constraint violations:\n" + String.join("\n", errors);
+        }
     }
 }
