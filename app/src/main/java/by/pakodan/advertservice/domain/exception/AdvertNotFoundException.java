@@ -1,4 +1,4 @@
-package by.pakodan.advertmanager.domain.exception;
+package by.pakodan.advertservice.domain.exception;
 
 public class AdvertNotFoundException extends RuntimeException {
 

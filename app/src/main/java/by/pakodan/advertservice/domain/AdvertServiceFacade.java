@@ -1,22 +1,21 @@
-package by.pakodan.advertmanager.domain;
+package by.pakodan.advertservice.domain;
 
-import by.pakodan.advertmanager.domain.dto.AdvertDto;
-import by.pakodan.advertmanager.domain.dto.SaveAdvertCommand;
-import by.pakodan.advertmanager.domain.exception.AdvertNotFoundException;
-import lombok.Builder;
+import by.pakodan.advertservice.domain.dto.AdvertDto;
+import by.pakodan.advertservice.domain.dto.SaveAdvertCommand;
+import by.pakodan.advertservice.domain.exception.AdvertNotFoundException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Builder
+@RequiredArgsConstructor
 @Slf4j
-public class AdvertManagerFacade {
+public class AdvertServiceFacade {
 
     private final AdvertRepository advertRepository;
     private final PhoneNumberRepository phoneNumberRepository;
     private final AdvertFactory advertFactory;
-    private final AdvertManagerProperties advertManagerProperties;
 
     public long createOrUpdate(SaveAdvertCommand command) {
         log.debug("Validating command = {}", command);

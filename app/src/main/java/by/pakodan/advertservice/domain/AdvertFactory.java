@@ -1,6 +1,6 @@
-package by.pakodan.advertmanager.domain;
+package by.pakodan.advertservice.domain;
 
-import by.pakodan.advertmanager.domain.dto.SaveAdvertCommand;
+import by.pakodan.advertservice.domain.dto.SaveAdvertCommand;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;

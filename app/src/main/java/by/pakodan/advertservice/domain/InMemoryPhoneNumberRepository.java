@@ -1,4 +1,4 @@
-package by.pakodan.advertmanager.domain;
+package by.pakodan.advertservice.domain;
 
 import java.util.Map;
 import java.util.Objects;

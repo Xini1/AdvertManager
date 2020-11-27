@@ -1,7 +1,7 @@
-package by.pakodan.advertmanager.domain;
+package by.pakodan.advertservice.domain;
 
-import by.pakodan.advertmanager.domain.dto.SaveAdvertCommand;
-import by.pakodan.advertmanager.domain.exception.AdvertNotFoundException;
+import by.pakodan.advertservice.domain.dto.SaveAdvertCommand;
+import by.pakodan.advertservice.domain.exception.AdvertNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -13,36 +13,35 @@ import java.util.Set;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class AdvertManagerFacadeTest {
+class CreateOrUpdateAdvertTest {
 
-    private AdvertManagerFacade advertManagerFacade;
+    private AdvertServiceFacade advertServiceFacade;
 
     @BeforeEach
     void setUp() {
-        advertManagerFacade = new AdvertManagerConfiguration()
-                .advertManagerFacadeForTests(AdvertManagerProperties.builder().build());
+        advertServiceFacade = new AdvertServiceConfiguration().advertServiceFacadeForTests();
     }
 
     @Test
     void givenNewAdvert_whenCreateOrUpdate_thenAdvertCreated() {
-        long id = advertManagerFacade.createOrUpdate(getSaveAdvertCommand());
+        long id = advertServiceFacade.createOrUpdate(getSaveAdvertCommand());
 
-        assertThat(advertManagerFacade.getById(id)).isNotNull();
+        assertThat(advertServiceFacade.getById(id)).isNotNull();
     }
 
     @Test
     void givenExistedAdvert_whenCreateOrUpdate_thenAdvertUpdated() {
         SaveAdvertCommand saveAdvertCommand = getSaveAdvertCommand();
-        long firstId = advertManagerFacade.createOrUpdate(saveAdvertCommand);
+        long firstId = advertServiceFacade.createOrUpdate(saveAdvertCommand);
 
         saveAdvertCommand = saveAdvertCommand.toBuilder()
                 .urlString("new url")
                 .phoneNumberStrings(Set.of("+375291111111", "+375292222222"))
                 .build();
 
-        long secondId = advertManagerFacade.createOrUpdate(saveAdvertCommand);
+        long secondId = advertServiceFacade.createOrUpdate(saveAdvertCommand);
 
-        assertThat(advertManagerFacade.getById(secondId)).isNotNull();
+        assertThat(advertServiceFacade.getById(secondId)).isNotNull();
         assertThat(secondId).isEqualTo(firstId);
     }
 
@@ -52,12 +51,12 @@ class AdvertManagerFacadeTest {
                 .urlString(null)
                 .build();
 
-        assertThrows(ConstraintViolationException.class, () -> advertManagerFacade.createOrUpdate(invalidSaveAdvertCommand));
+        assertThrows(ConstraintViolationException.class, () -> advertServiceFacade.createOrUpdate(invalidSaveAdvertCommand));
     }
 
     @Test
     void givenAdvertDoNotExist_whenGetById_thenThrowAdvertNotFoundException() {
-        assertThrows(AdvertNotFoundException.class, () -> advertManagerFacade.getById(1));
+        assertThrows(AdvertNotFoundException.class, () -> advertServiceFacade.getById(1));
     }
 
     private SaveAdvertCommand getSaveAdvertCommand() {

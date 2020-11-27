@@ -1,6 +1,6 @@
-package by.pakodan.advertmanager.domain;
+package by.pakodan.advertservice.domain;
 
-import by.pakodan.advertmanager.domain.dto.AdvertDto;
+import by.pakodan.advertservice.domain.dto.AdvertDto;
 import lombok.Builder;
 import lombok.Getter;
 
