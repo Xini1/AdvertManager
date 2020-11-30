@@ -1,31 +1,39 @@
 package by.pakodan.advertservice.domain;
 
-import lombok.Builder;
-import lombok.Getter;
+import by.pakodan.advertservice.utils.Preconditions;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 
 import java.time.LocalDate;
 
-@Builder(toBuilder = true)
-@Getter
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@EqualsAndHashCode
 class PhoneNumber {
 
-    private final Long id;
     private final String countryPrefix;
     private final String areaCode;
     private final String number;
-    private final boolean isActive;
-    private final LocalDate lastAdvertisementDate;
+    @EqualsAndHashCode.Exclude
+    private EntityId id;
+    private boolean isActive;
+    private LocalDate lastAdvertisementDate;
 
-    static PhoneNumber from(String phoneNumber) {
-        return PhoneNumber.builder()
-                .countryPrefix(phoneNumber.substring(0, 4))
-                .areaCode(phoneNumber.substring(4, 6))
-                .number(phoneNumber.substring(6))
-                .isActive(true)
-                .build();
-    }
+    static PhoneNumber of(String rawPhoneNumber) {
+        Preconditions.checkNotBlank(rawPhoneNumber, "raw phone number");
 
-    String asString() {
-        return countryPrefix + areaCode + number;
+        String cleanPhoneNumber = rawPhoneNumber.replace("(", "")
+                .replace(")", "")
+                .replace("-", "")
+                .replaceFirst("80", "+375");
+
+        Preconditions.checkMatchRegex(cleanPhoneNumber, "+375\\d{8}", "phone number");
+
+        return new PhoneNumber(cleanPhoneNumber.substring(0, 4),
+                cleanPhoneNumber.substring(4, 6),
+                cleanPhoneNumber.substring(6),
+                null,
+                true,
+                null);
     }
 }

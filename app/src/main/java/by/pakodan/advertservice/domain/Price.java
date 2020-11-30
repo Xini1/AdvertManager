@@ -1,16 +1,22 @@
 package by.pakodan.advertservice.domain;
 
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
+import by.pakodan.advertservice.utils.Preconditions;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 
 import java.math.BigDecimal;
 
-@Builder(toBuilder = true)
-@Getter
-@EqualsAndHashCode
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 class Price {
 
-    BigDecimal amount;
-    Currency currency;
+    private final Currency currency;
+    private final BigDecimal amount;
+
+    static Price of(Currency currency, String amount) {
+        Preconditions.checkNotNull(currency, "currency");
+        Preconditions.checkNotBlank(amount, "amount");
+        Preconditions.checkMatchRegex(amount, "\\d+(\\.\\d{1,2})?", "amount");
+
+        return new Price(currency, new BigDecimal(amount));
+    }
 }
