@@ -13,17 +13,20 @@ class Advert {
     private final Address address;
     private final LocalDate creationDate;
     private EntityId id;
+    private Url url;
     private AdvertDescription advertDescription;
     private Price price;
     private Set<PhoneNumber> phoneNumbers;
     private LocalDate lastModificationDate;
 
-    static Advert of(Address address,
+    static Advert of(Url url,
+                     Address address,
                      AdvertDescription advertDescription,
                      Price price,
                      Set<PhoneNumber> phoneNumbers,
                      LocalDate creationDate) {
 
+        Preconditions.checkNotNull(url, "url");
         Preconditions.checkNotNull(address, "address");
         Preconditions.checkNotNull(advertDescription, "advert description");
         Preconditions.checkNotNull(price, "price");
@@ -34,6 +37,7 @@ class Advert {
         return new Advert(address,
                 creationDate,
                 null,
+                url,
                 advertDescription,
                 price,
                 phoneNumbers,
