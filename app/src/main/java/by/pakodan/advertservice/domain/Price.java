@@ -19,4 +19,8 @@ class Price {
 
         return new Price(currency, new BigDecimal(amount));
     }
+
+    public String asString() {
+        return String.format("%s %s", amount, currency);
+    }
 }

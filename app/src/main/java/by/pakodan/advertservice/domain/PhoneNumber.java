@@ -1,39 +1,53 @@
 package by.pakodan.advertservice.domain;
 
+import by.pakodan.advertservice.utils.PhoneNumberUtils;
 import by.pakodan.advertservice.utils.Preconditions;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
 
+import java.time.Clock;
 import java.time.LocalDate;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-@EqualsAndHashCode
 class PhoneNumber {
 
+    @Getter(AccessLevel.PACKAGE)
+    private final PhoneNumberId id;
     private final String countryPrefix;
     private final String areaCode;
     private final String number;
-    @EqualsAndHashCode.Exclude
-    private EntityId id;
+    private final Clock clock;
     private boolean isActive;
     private LocalDate lastAdvertisementDate;
 
-    static PhoneNumber of(String rawPhoneNumber) {
+    static PhoneNumber of(String rawPhoneNumber, Clock clock) {
         Preconditions.checkNotBlank(rawPhoneNumber, "raw phone number");
 
-        String cleanPhoneNumber = rawPhoneNumber.replace("(", "")
-                .replace(")", "")
-                .replace("-", "")
-                .replaceFirst("80", "+375");
+        String cleanPhoneNumber = PhoneNumberUtils.formatPhoneNumber(rawPhoneNumber);
 
-        Preconditions.checkMatchRegex(cleanPhoneNumber, "+375\\d{8}", "phone number");
+        Preconditions.checkMatchRegex(cleanPhoneNumber, "\\+375\\d{9}", "phone number");
 
-        return new PhoneNumber(cleanPhoneNumber.substring(0, 4),
+        return new PhoneNumber(PhoneNumberId.newInstance(),
+                cleanPhoneNumber.substring(0, 4),
                 cleanPhoneNumber.substring(4, 6),
                 cleanPhoneNumber.substring(6),
-                null,
+                clock,
                 true,
                 null);
+    }
+
+    PhoneNumber updateAdvertisementDate() {
+        lastAdvertisementDate = LocalDate.now(clock);
+
+        return this;
+    }
+
+    boolean isReadyForAdvertisement(LocalDate threshold) {
+        return lastAdvertisementDate.isBefore(threshold);
+    }
+
+    String asRawPhoneNumber() {
+        return countryPrefix + areaCode + number;
     }
 }

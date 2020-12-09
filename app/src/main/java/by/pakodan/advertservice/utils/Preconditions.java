@@ -4,6 +4,7 @@ import lombok.experimental.UtilityClass;
 
 import java.util.Collection;
 import java.util.Objects;
+import java.util.UUID;
 
 @UtilityClass
 public class Preconditions {
@@ -38,6 +39,14 @@ public class Preconditions {
         if (!string.matches(regex)) {
             throw new ValidationException(String.format("%s \"%s\" must match regular expression %s",
                     parameterName, string, regex));
+        }
+    }
+
+    public void checkUUID(String string, String parameterName) {
+        try {
+            UUID.fromString(string);
+        } catch (IllegalArgumentException e) {
+            throw new ValidationException(String.format("%s \"%s\" must be valid UUID", parameterName, string));
         }
     }
 
